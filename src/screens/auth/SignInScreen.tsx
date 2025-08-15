@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { getAuthErrorInfo, validateEmail } from "../../lib/authUtils";
 
 interface SignInScreenProps {
   navigation: any;
@@ -28,12 +29,30 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
       return;
     }
 
+    // Validate email format
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
     setLoading(true);
     const { error } = await signIn(email, password);
     setLoading(false);
 
     if (error) {
-      Alert.alert("Error", error.message);
+      const errorInfo = getAuthErrorInfo(error);
+
+      if (errorInfo.action === "Resend Verification Email") {
+        Alert.alert(errorInfo.title, errorInfo.message, [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: errorInfo.action,
+            onPress: () => navigation.navigate("EmailVerification", { email }),
+          },
+        ]);
+      } else {
+        Alert.alert(errorInfo.title, errorInfo.message);
+      }
     }
   };
 

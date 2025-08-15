@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { getAuthErrorInfo, validateEmail } from "../../lib/authUtils";
 
 interface ForgotPasswordScreenProps {
   navigation: any;
@@ -28,12 +29,19 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
       return;
     }
 
+    // Validate email format
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
     setLoading(true);
     const { error } = await resetPassword(email);
     setLoading(false);
 
     if (error) {
-      Alert.alert("Error", error.message);
+      const errorInfo = getAuthErrorInfo(error);
+      Alert.alert(errorInfo.title, errorInfo.message);
     } else {
       Alert.alert(
         "Success",

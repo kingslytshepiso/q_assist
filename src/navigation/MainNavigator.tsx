@@ -1,23 +1,55 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
+import { Text } from "react-native";
 import { CategoriesScreen } from "../screens/main/CategoriesScreen";
+import { CategoryRequestsScreen } from "../screens/main/CategoryRequestsScreen";
 import { CreateRequestScreen } from "../screens/main/CreateRequestScreen";
 import { HomeScreen } from "../screens/main/HomeScreen";
+import { MyOffersScreen } from "../screens/main/MyOffersScreen";
+import { MyRequestsScreen } from "../screens/main/MyRequestsScreen";
 import { ProfileScreen } from "../screens/main/ProfileScreen";
 import { RequestDetailScreen } from "../screens/main/RequestDetailScreen";
 
+// Define navigation types
+type HomeStackParamList = {
+  HomeMain: undefined;
+  CreateRequest: undefined;
+  RequestDetail: { requestId: string };
+};
+
+type CategoriesStackParamList = {
+  CategoriesMain: undefined;
+  CategoryRequests: {
+    category: {
+      id: string;
+      name: string;
+      description: string | null;
+      icon: string | null;
+    };
+  };
+};
+
+type ProfileStackParamList = {
+  ProfileMain: undefined;
+  MyRequests: undefined;
+  MyOffers: undefined;
+};
+
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const HomeStackNavigator = createStackNavigator<HomeStackParamList>();
+const CategoriesStackNavigator =
+  createStackNavigator<CategoriesStackParamList>();
+const ProfileStackNavigator = createStackNavigator<ProfileStackParamList>();
 
 const HomeStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
+  <HomeStackNavigator.Navigator>
+    <HomeStackNavigator.Screen
       name="HomeMain"
       component={HomeScreen}
       options={{ headerShown: false }}
     />
-    <Stack.Screen
+    <HomeStackNavigator.Screen
       name="CreateRequest"
       component={CreateRequestScreen}
       options={{
@@ -31,7 +63,7 @@ const HomeStack = () => (
         },
       }}
     />
-    <Stack.Screen
+    <HomeStackNavigator.Screen
       name="RequestDetail"
       component={RequestDetailScreen}
       options={{
@@ -45,27 +77,69 @@ const HomeStack = () => (
         },
       }}
     />
-  </Stack.Navigator>
+  </HomeStackNavigator.Navigator>
 );
 
 const CategoriesStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
+  <CategoriesStackNavigator.Navigator>
+    <CategoriesStackNavigator.Screen
       name="CategoriesMain"
       component={CategoriesScreen}
       options={{ headerShown: false }}
     />
-  </Stack.Navigator>
+    <CategoriesStackNavigator.Screen
+      name="CategoryRequests"
+      component={CategoryRequestsScreen}
+      options={({ route }: { route: any }) => ({
+        title: route.params?.category?.name || "Category Requests",
+        headerStyle: {
+          backgroundColor: "#007AFF",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      })}
+    />
+  </CategoriesStackNavigator.Navigator>
 );
 
 const ProfileStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
+  <ProfileStackNavigator.Navigator>
+    <ProfileStackNavigator.Screen
       name="ProfileMain"
       component={ProfileScreen}
       options={{ headerShown: false }}
     />
-  </Stack.Navigator>
+    <ProfileStackNavigator.Screen
+      name="MyRequests"
+      component={MyRequestsScreen}
+      options={{
+        title: "My Requests",
+        headerStyle: {
+          backgroundColor: "#007AFF",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    />
+    <ProfileStackNavigator.Screen
+      name="MyOffers"
+      component={MyOffersScreen}
+      options={{
+        title: "My Offers",
+        headerStyle: {
+          backgroundColor: "#007AFF",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    />
+  </ProfileStackNavigator.Navigator>
 );
 
 export const MainNavigator = () => {
@@ -85,7 +159,7 @@ export const MainNavigator = () => {
             iconName = "?";
           }
 
-          return <span style={{ fontSize: size, color }}>{iconName}</span>;
+          return <Text style={{ fontSize: size, color }}>{iconName}</Text>;
         },
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "gray",

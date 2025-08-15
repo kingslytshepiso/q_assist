@@ -11,6 +11,11 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import {
+  getAuthErrorInfo,
+  validateEmail,
+  validatePassword,
+} from "../../lib/authUtils";
 
 interface SignUpScreenProps {
   navigation: any;
@@ -25,18 +30,31 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const { signUp } = useAuth();
 
   const handleSignUp = async () => {
+    // Validate all fields are filled
     if (!fullName || !email || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+    // Validate email format
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      Alert.alert(
+        "Password Requirements",
+        passwordValidation.errors.join("\n")
+      );
+      return;
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
 
@@ -45,13 +63,11 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
     setLoading(false);
 
     if (error) {
-      Alert.alert("Error", error.message);
+      const errorInfo = getAuthErrorInfo(error);
+      Alert.alert(errorInfo.title, errorInfo.message);
     } else {
-      Alert.alert(
-        "Success",
-        "Account created! Please check your email to verify your account.",
-        [{ text: "OK", onPress: () => navigation.navigate("SignIn") }]
-      );
+      // Navigate to email verification screen
+      navigation.navigate("EmailVerification", { email });
     }
   };
 
