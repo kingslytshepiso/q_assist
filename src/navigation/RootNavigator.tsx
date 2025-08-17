@@ -62,7 +62,9 @@ export const RootNavigator = () => {
   useEffect(() => {
     if (user && requestsLoading) {
       const timeout = setTimeout(() => {
-        console.log("RootNavigator: Loading timeout reached, forcing navigation");
+        console.log(
+          "RootNavigator: Loading timeout reached, forcing navigation"
+        );
         setLoadingTimeout(true);
       }, 10000); // 10 second timeout
 
