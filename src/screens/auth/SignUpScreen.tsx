@@ -66,8 +66,8 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       const errorInfo = getAuthErrorInfo(error);
       Alert.alert(errorInfo.title, errorInfo.message);
     } else {
-      // Navigate to email verification screen
-      navigation.navigate("EmailVerification", { email });
+      // Navigate to OTP verification screen
+      navigation.navigate("OTPVerification", { email });
     }
   };
 

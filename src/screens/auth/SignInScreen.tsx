@@ -47,7 +47,7 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           { text: "Cancel", style: "cancel" },
           {
             text: errorInfo.action,
-            onPress: () => navigation.navigate("EmailVerification", { email }),
+            onPress: () => navigation.navigate("OTPVerification", { email }),
           },
         ]);
       } else {

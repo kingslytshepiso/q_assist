@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
+import { theme } from "../../lib/theme";
 
 interface Offer {
   id: string;
@@ -91,16 +92,7 @@ export const MyOffersScreen: React.FC<MyOffersScreenProps> = ({
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "#FF9500";
-      case "accepted":
-        return "#34C759";
-      case "rejected":
-        return "#FF3B30";
-      default:
-        return "#999";
-    }
+    return theme.utils.getStatusColor(status);
   };
 
   const renderOfferItem = ({ item }: { item: Offer }) => (
@@ -191,87 +183,68 @@ export const MyOffersScreen: React.FC<MyOffersScreenProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
+    ...theme.presets.container.base,
   },
   header: {
-    padding: 20,
-    backgroundColor: "white",
+    padding: theme.spacing[5],
+    backgroundColor: theme.colors.background.secondary,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: theme.colors.border.light,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 4,
+    ...theme.presets.text.h2,
+    marginBottom: theme.spacing[1],
   },
   subtitle: {
-    fontSize: 16,
-    color: "#666",
+    ...theme.presets.text.body,
+    color: theme.colors.text.secondary,
   },
   listContainer: {
-    padding: 16,
+    padding: theme.spacing[4],
   },
   offerCard: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...theme.presets.card.base,
+    marginBottom: theme.layout.listItemSpacing,
   },
   offerHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 8,
+    marginBottom: theme.spacing[2],
   },
   requestTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    ...theme.presets.text.h4,
     flex: 1,
-    marginRight: 8,
+    marginRight: theme.spacing[2],
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: theme.spacing[2],
+    paddingVertical: theme.spacing[1],
+    borderRadius: theme.borderRadius.md,
   },
   statusText: {
-    color: "white",
-    fontSize: 10,
-    fontWeight: "600",
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.size.xs,
+    fontWeight: theme.typography.weight.semibold,
   },
   requestDescription: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-    marginBottom: 12,
+    ...theme.presets.text.body,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing[3],
   },
   offerMessage: {
-    backgroundColor: "#f8f8f8",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
+    backgroundColor: theme.colors.background.tertiary,
+    padding: theme.spacing[3],
+    borderRadius: theme.borderRadius.base,
+    marginBottom: theme.spacing[3],
   },
   messageLabel: {
-    fontSize: 12,
-    color: "#666",
-    fontWeight: "500",
-    marginBottom: 4,
+    ...theme.presets.text.bodySmall,
+    fontWeight: theme.typography.weight.medium,
+    marginBottom: theme.spacing[1],
   },
   messageText: {
-    fontSize: 14,
-    color: "#333",
-    lineHeight: 20,
+    ...theme.presets.text.body,
   },
   offerFooter: {
     flexDirection: "row",
@@ -282,30 +255,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryText: {
-    fontSize: 12,
-    color: "#007AFF",
-    fontWeight: "500",
-    marginBottom: 4,
+    ...theme.presets.text.bodySmall,
+    color: theme.colors.primary.main,
+    fontWeight: theme.typography.weight.medium,
+    marginBottom: theme.spacing[1],
   },
   locationText: {
-    fontSize: 12,
-    color: "#999",
-    marginBottom: 2,
+    ...theme.presets.text.bodySmall,
+    color: theme.colors.text.tertiary,
+    marginBottom: theme.spacing[0.5],
   },
   requestOwnerText: {
-    fontSize: 12,
-    color: "#666",
-    fontWeight: "500",
+    ...theme.presets.text.bodySmall,
+    fontWeight: theme.typography.weight.medium,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: theme.colors.background.primary,
   },
   loadingText: {
-    fontSize: 16,
-    color: "#666",
+    ...theme.presets.text.body,
+    color: theme.colors.text.secondary,
   },
   emptyContainer: {
     flex: 1,
@@ -314,26 +286,22 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#666",
-    marginBottom: 8,
+    ...theme.presets.text.h4,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing[2],
   },
   emptySubtext: {
-    fontSize: 14,
-    color: "#999",
+    ...theme.presets.text.bodySmall,
+    color: theme.colors.text.tertiary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: theme.spacing[5],
   },
   browseButton: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
+    ...theme.presets.button.primary,
+    paddingHorizontal: theme.spacing[5],
+    paddingVertical: theme.spacing[3],
   },
   browseButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    ...theme.presets.text.button,
   },
 });

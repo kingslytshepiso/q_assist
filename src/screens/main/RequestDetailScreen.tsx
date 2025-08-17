@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,15 +11,19 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
+import { theme } from "../../lib/theme";
 
 interface Request {
   id: string;
   title: string;
   description: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   status: string;
   created_at: string;
   user: {
+    id: string;
     full_name: string;
   };
   category: {
@@ -107,6 +112,29 @@ export const RequestDetailScreen: React.FC<RequestDetailScreenProps> = ({
     }
   };
 
+  const handleViewLocation = () => {
+    if (!request?.latitude || !request?.longitude) {
+      Alert.alert(
+        "Location Not Available",
+        "This request doesn't have location coordinates available."
+      );
+      return;
+    }
+
+    const url = `https://www.google.com/maps/search/?api=1&query=${request.latitude},${request.longitude}`;
+
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        Alert.alert(
+          "Error",
+          "Unable to open Google Maps. Please make sure you have Google Maps installed."
+        );
+      }
+    });
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return (
@@ -159,6 +187,14 @@ export const RequestDetailScreen: React.FC<RequestDetailScreenProps> = ({
             <Text style={styles.detailLabel}>Location:</Text>
             <Text style={styles.detailValue}>{request.location}</Text>
           </View>
+          {request.latitude && request.longitude && (
+            <TouchableOpacity
+              style={styles.locationButton}
+              onPress={handleViewLocation}
+            >
+              <Text style={styles.locationButtonText}>📍 View on Map</Text>
+            </TouchableOpacity>
+          )}
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Posted by:</Text>
             <Text style={styles.detailValue}>{request.user.full_name}</Text>
@@ -215,66 +251,66 @@ export const RequestDetailScreen: React.FC<RequestDetailScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: theme.colors.background.primary,
   },
   content: {
     padding: 20,
   },
   header: {
-    backgroundColor: "white",
+    backgroundColor: theme.colors.background.secondary,
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.colors.shadow.medium,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
+    color: theme.colors.text.primary,
     marginBottom: 12,
   },
   statusContainer: {
     alignSelf: "flex-start",
-    backgroundColor: "#007AFF",
+    backgroundColor: theme.colors.primary.main,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   status: {
-    color: "white",
+    color: theme.colors.text.inverse,
     fontSize: 12,
     fontWeight: "600",
   },
   section: {
-    backgroundColor: "white",
+    backgroundColor: theme.colors.background.secondary,
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.colors.shadow.medium,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
+    color: theme.colors.text.primary,
     marginBottom: 12,
   },
   description: {
     fontSize: 16,
-    color: "#666",
+    color: theme.colors.text.secondary,
     lineHeight: 24,
   },
   detailRow: {
@@ -283,87 +319,99 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: theme.colors.border.light,
   },
   detailLabel: {
     fontSize: 14,
-    color: "#666",
+    color: theme.colors.text.secondary,
     fontWeight: "500",
   },
   detailValue: {
     fontSize: 14,
-    color: "#333",
+    color: theme.colors.text.primary,
     fontWeight: "600",
   },
   offerSection: {
-    backgroundColor: "white",
+    backgroundColor: theme.colors.background.secondary,
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.colors.shadow.medium,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
   offerInput: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: theme.colors.background.tertiary,
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: theme.colors.border.medium,
     marginBottom: 16,
     minHeight: 100,
   },
   offerButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: theme.colors.primary.main,
     borderRadius: 8,
     padding: 16,
     alignItems: "center",
   },
   offerButtonDisabled: {
-    backgroundColor: "#ccc",
+    backgroundColor: theme.colors.border.medium,
   },
   offerButtonText: {
-    color: "white",
+    color: theme.colors.text.inverse,
     fontSize: 16,
     fontWeight: "600",
   },
   ownerSection: {
-    backgroundColor: "#f0f8ff",
+    backgroundColor: theme.colors.secondary.light,
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#007AFF",
+    borderColor: theme.colors.secondary.main,
   },
   ownerText: {
     fontSize: 14,
-    color: "#007AFF",
+    color: theme.colors.secondary.dark,
     lineHeight: 20,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: theme.colors.background.primary,
   },
   loadingText: {
     fontSize: 16,
-    color: "#666",
+    color: theme.colors.text.secondary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: theme.colors.background.primary,
   },
   errorText: {
     fontSize: 16,
-    color: "#666",
+    color: theme.colors.text.secondary,
+  },
+  locationButton: {
+    backgroundColor: theme.colors.primary.main,
+    borderRadius: 8,
+    padding: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  locationButtonText: {
+    color: theme.colors.text.inverse,
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

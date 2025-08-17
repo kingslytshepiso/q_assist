@@ -1,33 +1,36 @@
+import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-import { Text } from "react-native";
-import { CategoriesScreen } from "../screens/main/CategoriesScreen";
-import { CategoryRequestsScreen } from "../screens/main/CategoryRequestsScreen";
+import { Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { theme } from "../lib/theme";
 import { CreateRequestScreen } from "../screens/main/CreateRequestScreen";
 import { HomeScreen } from "../screens/main/HomeScreen";
 import { MyOffersScreen } from "../screens/main/MyOffersScreen";
 import { MyRequestsScreen } from "../screens/main/MyRequestsScreen";
+import { NearbyRequestsScreen } from "../screens/main/NearbyRequestsScreen";
 import { ProfileScreen } from "../screens/main/ProfileScreen";
 import { RequestDetailScreen } from "../screens/main/RequestDetailScreen";
+import { WaitScreen } from "../screens/main/WaitScreen";
 
 // Define navigation types
 type HomeStackParamList = {
   HomeMain: undefined;
   CreateRequest: undefined;
   RequestDetail: { requestId: string };
+  NearbyRequests: undefined;
 };
 
-type CategoriesStackParamList = {
-  CategoriesMain: undefined;
-  CategoryRequests: {
-    category: {
-      id: string;
-      name: string;
-      description: string | null;
-      icon: string | null;
-    };
-  };
+type RequestStackParamList = {
+  RequestMain: undefined;
+  CreateRequest: undefined;
+  RequestDetail: { requestId: string };
+};
+
+type WaitStackParamList = {
+  WaitMain: undefined;
+  RequestDetail: { requestId: string };
 };
 
 type ProfileStackParamList = {
@@ -38,8 +41,8 @@ type ProfileStackParamList = {
 
 const Tab = createBottomTabNavigator();
 const HomeStackNavigator = createStackNavigator<HomeStackParamList>();
-const CategoriesStackNavigator =
-  createStackNavigator<CategoriesStackParamList>();
+const RequestStackNavigator = createStackNavigator<RequestStackParamList>();
+const WaitStackNavigator = createStackNavigator<WaitStackParamList>();
 const ProfileStackNavigator = createStackNavigator<ProfileStackParamList>();
 
 const HomeStack = () => (
@@ -55,11 +58,11 @@ const HomeStack = () => (
       options={{
         title: "Create Request",
         headerStyle: {
-          backgroundColor: "#007AFF",
+          backgroundColor: theme.colors.primary.main,
         },
-        headerTintColor: "#fff",
+        headerTintColor: theme.colors.text.inverse,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: theme.typography.weight.bold,
         },
       }}
     />
@@ -69,39 +72,100 @@ const HomeStack = () => (
       options={{
         title: "Request Details",
         headerStyle: {
-          backgroundColor: "#007AFF",
+          backgroundColor: theme.colors.primary.main,
         },
-        headerTintColor: "#fff",
+        headerTintColor: theme.colors.text.inverse,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: theme.typography.weight.bold,
+        },
+      }}
+    />
+    <HomeStackNavigator.Screen
+      name="NearbyRequests"
+      component={NearbyRequestsScreen}
+      options={{
+        title: "Nearby Requests",
+        headerStyle: {
+          backgroundColor: theme.colors.primary.main,
+        },
+        headerTintColor: theme.colors.text.inverse,
+        headerTitleStyle: {
+          fontWeight: theme.typography.weight.bold,
         },
       }}
     />
   </HomeStackNavigator.Navigator>
 );
 
-const CategoriesStack = () => (
-  <CategoriesStackNavigator.Navigator>
-    <CategoriesStackNavigator.Screen
-      name="CategoriesMain"
-      component={CategoriesScreen}
+const RequestStack = () => (
+  <RequestStackNavigator.Navigator>
+    <RequestStackNavigator.Screen
+      name="RequestMain"
+      component={CreateRequestScreen}
+      options={{
+        title: "Create Request",
+        headerStyle: {
+          backgroundColor: theme.colors.primary.main,
+        },
+        headerTintColor: theme.colors.text.inverse,
+        headerTitleStyle: {
+          fontWeight: theme.typography.weight.bold,
+        },
+      }}
+    />
+    <RequestStackNavigator.Screen
+      name="CreateRequest"
+      component={CreateRequestScreen}
+      options={{
+        title: "Create Request",
+        headerStyle: {
+          backgroundColor: theme.colors.primary.main,
+        },
+        headerTintColor: theme.colors.text.inverse,
+        headerTitleStyle: {
+          fontWeight: theme.typography.weight.bold,
+        },
+      }}
+    />
+    <RequestStackNavigator.Screen
+      name="RequestDetail"
+      component={RequestDetailScreen}
+      options={{
+        title: "Request Details",
+        headerStyle: {
+          backgroundColor: theme.colors.primary.main,
+        },
+        headerTintColor: theme.colors.text.inverse,
+        headerTitleStyle: {
+          fontWeight: theme.typography.weight.bold,
+        },
+      }}
+    />
+  </RequestStackNavigator.Navigator>
+);
+
+const WaitStack = () => (
+  <WaitStackNavigator.Navigator>
+    <WaitStackNavigator.Screen
+      name="WaitMain"
+      component={WaitScreen}
       options={{ headerShown: false }}
     />
-    <CategoriesStackNavigator.Screen
-      name="CategoryRequests"
-      component={CategoryRequestsScreen}
-      options={({ route }: { route: any }) => ({
-        title: route.params?.category?.name || "Category Requests",
+    <WaitStackNavigator.Screen
+      name="RequestDetail"
+      component={RequestDetailScreen}
+      options={{
+        title: "Request Details",
         headerStyle: {
-          backgroundColor: "#007AFF",
+          backgroundColor: theme.colors.primary.main,
         },
-        headerTintColor: "#fff",
+        headerTintColor: theme.colors.text.inverse,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: theme.typography.weight.bold,
         },
-      })}
+      }}
     />
-  </CategoriesStackNavigator.Navigator>
+  </WaitStackNavigator.Navigator>
 );
 
 const ProfileStack = () => (
@@ -117,11 +181,11 @@ const ProfileStack = () => (
       options={{
         title: "My Requests",
         headerStyle: {
-          backgroundColor: "#007AFF",
+          backgroundColor: theme.colors.primary.main,
         },
-        headerTintColor: "#fff",
+        headerTintColor: theme.colors.text.inverse,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: theme.typography.weight.bold,
         },
       }}
     />
@@ -131,11 +195,11 @@ const ProfileStack = () => (
       options={{
         title: "My Offers",
         headerStyle: {
-          backgroundColor: "#007AFF",
+          backgroundColor: theme.colors.primary.main,
         },
-        headerTintColor: "#fff",
+        headerTintColor: theme.colors.text.inverse,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: theme.typography.weight.bold,
         },
       }}
     />
@@ -143,37 +207,45 @@ const ProfileStack = () => (
 );
 
 export const MainNavigator = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
+          let iconName: keyof typeof Ionicons.glyphMap;
 
           if (route.name === "Home") {
-            iconName = focused ? "🏠" : "🏠";
-          } else if (route.name === "Categories") {
-            iconName = focused ? "📂" : "📂";
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Request") {
+            iconName = focused ? "add-circle" : "add-circle-outline";
+          } else if (route.name === "Wait") {
+            iconName = focused ? "search" : "search-outline";
           } else if (route.name === "Profile") {
-            iconName = focused ? "👤" : "👤";
+            iconName = focused ? "person" : "person-outline";
           } else {
-            iconName = "?";
+            iconName = "help-circle-outline";
           }
 
-          return <Text style={{ fontSize: size, color }}>{iconName}</Text>;
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: theme.colors.primary.main,
+        tabBarInactiveTintColor: theme.colors.text.tertiary,
         tabBarStyle: {
-          backgroundColor: "white",
+          backgroundColor: theme.colors.background.secondary,
           borderTopWidth: 1,
-          borderTopColor: "#eee",
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          borderTopColor: theme.colors.border.light,
+          paddingBottom: Platform.OS === "ios" ? Math.max(insets.bottom, 8) : 8,
+          height: Platform.OS === "ios" ? 80 + Math.max(insets.bottom, 8) : 80,
+          paddingHorizontal: theme.spacing[2],
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
+          fontSize: theme.typography.size.sm,
+          fontWeight: theme.typography.weight.medium,
+          marginTop: 4,
+        },
+        tabBarIconStyle: {
+          marginTop: 8,
         },
         headerShown: false,
       })}
@@ -184,9 +256,14 @@ export const MainNavigator = () => {
         options={{ title: "Home" }}
       />
       <Tab.Screen
-        name="Categories"
-        component={CategoriesStack}
-        options={{ title: "Categories" }}
+        name="Request"
+        component={RequestStack}
+        options={{ title: "Request" }}
+      />
+      <Tab.Screen
+        name="Wait"
+        component={WaitStack}
+        options={{ title: "Wait" }}
       />
       <Tab.Screen
         name="Profile"

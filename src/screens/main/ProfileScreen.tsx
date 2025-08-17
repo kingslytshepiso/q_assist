@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { theme } from "../../lib/theme";
 
 interface ProfileScreenProps {
   navigation: any;
@@ -104,90 +105,85 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
+    ...theme.presets.container.base,
   },
   header: {
-    backgroundColor: "white",
-    padding: 20,
+    backgroundColor: theme.colors.background.secondary,
+    padding: theme.spacing[5],
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: theme.colors.border.light,
   },
   avatarContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#007AFF",
+    backgroundColor: theme.colors.primary.main,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: theme.spacing[4],
   },
   avatarText: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "white",
+    fontSize: theme.typography.size["3xl"],
+    fontWeight: theme.typography.weight.bold,
+    color: theme.colors.text.inverse,
   },
   userName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 4,
+    ...theme.presets.text.h2,
+    marginBottom: theme.spacing[1],
   },
   userEmail: {
-    fontSize: 16,
-    color: "#666",
+    ...theme.presets.text.body,
+    color: theme.colors.text.secondary,
   },
   menuSection: {
-    backgroundColor: "white",
-    marginTop: 20,
-    marginHorizontal: 16,
-    borderRadius: 12,
+    backgroundColor: theme.colors.background.secondary,
+    marginTop: theme.spacing[5],
+    marginHorizontal: theme.spacing[4],
+    borderRadius: theme.borderRadius.md,
     overflow: "hidden",
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: theme.spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: theme.colors.border.light,
   },
   menuIcon: {
-    fontSize: 24,
-    marginRight: 16,
+    fontSize: theme.typography.size["2xl"],
+    marginRight: theme.spacing[4],
   },
   menuContent: {
     flex: 1,
   },
   menuTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 2,
+    ...theme.presets.text.body,
+    fontWeight: theme.typography.weight.semibold,
+    marginBottom: theme.spacing[0.5],
   },
   menuSubtitle: {
-    fontSize: 14,
-    color: "#666",
+    ...theme.presets.text.bodySmall,
   },
   menuArrow: {
-    fontSize: 18,
-    color: "#999",
-    fontWeight: "300",
+    fontSize: theme.typography.size.xl,
+    color: theme.colors.text.tertiary,
+    fontWeight: theme.typography.weight.light,
   },
   signOutSection: {
-    marginTop: 20,
-    marginHorizontal: 16,
-    marginBottom: 20,
+    marginTop: theme.spacing[5],
+    marginHorizontal: theme.spacing[4],
+    marginBottom: theme.spacing[5],
   },
   signOutButton: {
-    backgroundColor: "#FF3B30",
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: theme.colors.status.error,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing[4],
     alignItems: "center",
   },
   signOutText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.size.base,
+    fontWeight: theme.typography.weight.semibold,
   },
 });

@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { theme } from "../../lib/theme";
 
 export const MyRequestsScreen: React.FC = () => {
   return (
@@ -12,19 +13,16 @@ export const MyRequestsScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...theme.presets.container.base,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
   text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
+    ...theme.presets.text.h2,
+    marginBottom: theme.spacing[2],
   },
   subtext: {
-    fontSize: 16,
-    color: "#666",
+    ...theme.presets.text.body,
+    color: theme.colors.text.secondary,
   },
 });

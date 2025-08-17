@@ -1,16 +1,21 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../contexts/AuthContext";
+import { theme } from "../lib/theme";
 
 interface Request {
   id: string;
   title: string;
   description: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   status: string;
   created_at: string;
-  user: {
+  user?: {
+    id: string;
     full_name: string;
-  };
+  } | null;
   category: {
     name: string;
   };
@@ -25,6 +30,8 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   request,
   onPress,
 }) => {
+  const { user } = useAuth();
+  const isOwnRequest = user?.id === request.user?.id;
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -45,15 +52,15 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open":
-        return "#34C759";
+        return theme.colors.status.success;
       case "in_progress":
-        return "#FF9500";
+        return theme.colors.status.warning;
       case "completed":
-        return "#007AFF";
+        return theme.colors.status.info;
       case "cancelled":
-        return "#FF3B30";
+        return theme.colors.status.error;
       default:
-        return "#999";
+        return theme.colors.text.tertiary;
     }
   };
 
@@ -63,30 +70,42 @@ export const RequestCard: React.FC<RequestCardProps> = ({
         <Text style={styles.title} numberOfLines={1}>
           {request.title}
         </Text>
-        <View
-          style={[
-            styles.statusBadge,
-            { backgroundColor: getStatusColor(request.status) },
-          ]}
-        >
-          <Text style={styles.statusText}>
-            {request.status.replace("_", " ").toUpperCase()}
-          </Text>
+        <View style={styles.headerRight}>
+          {isOwnRequest && (
+            <View style={styles.ownRequestBadge}>
+              <Text style={styles.ownRequestText}>YOURS</Text>
+            </View>
+          )}
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: getStatusColor(request.status) },
+            ]}
+          >
+            <Text style={styles.statusText}>
+              {request.status.replace("_", " ").toUpperCase()}
+            </Text>
+          </View>
         </View>
       </View>
-
-      <Text style={styles.description} numberOfLines={2}>
-        {request.description}
-      </Text>
 
       <View style={styles.footer}>
         <View style={styles.metaInfo}>
           <Text style={styles.category}>{request.category.name}</Text>
-          <Text style={styles.location}>📍 {request.location}</Text>
+          <View style={styles.locationContainer}>
+            <Text style={styles.location}>📍 {request.location}</Text>
+            {request.latitude && request.longitude && (
+              <Text style={styles.locationIndicator}>🗺️</Text>
+            )}
+          </View>
         </View>
 
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>by {request.user.full_name}</Text>
+          <Text style={[styles.userName, isOwnRequest && styles.ownUserName]}>
+            {isOwnRequest
+              ? "You"
+              : `by ${request.user?.full_name || "Unknown User"}`}
+          </Text>
           <Text style={styles.timeAgo}>{formatDate(request.created_at)}</Text>
         </View>
       </View>
@@ -96,16 +115,16 @@ export const RequestCard: React.FC<RequestCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
+    backgroundColor: theme.colors.background.secondary,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing[4],
+    marginBottom: theme.spacing[3],
+    shadowColor: theme.colors.shadow.medium,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 5,
   },
@@ -113,30 +132,46 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 8,
+    marginBottom: theme.spacing[2],
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing[2],
+  },
+  ownRequestBadge: {
+    backgroundColor: theme.colors.accent.main,
+    paddingHorizontal: theme.spacing[2],
+    paddingVertical: theme.spacing[1],
+    borderRadius: theme.borderRadius.base,
+  },
+  ownRequestText: {
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.size.xs,
+    fontWeight: theme.typography.weight.bold,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    fontSize: theme.typography.size.lg,
+    fontWeight: theme.typography.weight.semibold,
+    color: theme.colors.text.primary,
     flex: 1,
-    marginRight: 8,
+    marginRight: theme.spacing[2],
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: theme.spacing[2],
+    paddingVertical: theme.spacing[1],
+    borderRadius: theme.borderRadius.base,
   },
   statusText: {
-    color: "white",
-    fontSize: 10,
-    fontWeight: "600",
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.size.xs,
+    fontWeight: theme.typography.weight.semibold,
   },
   description: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-    marginBottom: 12,
+    fontSize: theme.typography.size.sm,
+    color: theme.colors.text.secondary,
+    lineHeight: theme.typography.lineHeight.normal,
+    marginBottom: theme.spacing[3],
   },
   footer: {
     flexDirection: "row",
@@ -147,26 +182,39 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   category: {
-    fontSize: 12,
-    color: "#007AFF",
-    fontWeight: "500",
-    marginBottom: 4,
+    fontSize: theme.typography.size.xs,
+    color: theme.colors.secondary.main,
+    fontWeight: theme.typography.weight.medium,
+    marginBottom: theme.spacing[1],
   },
   location: {
-    fontSize: 12,
-    color: "#999",
+    fontSize: theme.typography.size.xs,
+    color: theme.colors.text.tertiary,
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing[1],
+  },
+  locationIndicator: {
+    fontSize: theme.typography.size.xs,
+    color: theme.colors.secondary.main,
   },
   userInfo: {
     alignItems: "flex-end",
   },
   userName: {
-    fontSize: 12,
-    color: "#666",
-    fontWeight: "500",
-    marginBottom: 2,
+    fontSize: theme.typography.size.xs,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.typography.weight.medium,
+    marginBottom: theme.spacing[1],
+  },
+  ownUserName: {
+    color: theme.colors.accent.main,
+    fontWeight: theme.typography.weight.bold,
   },
   timeAgo: {
-    fontSize: 11,
-    color: "#999",
+    fontSize: theme.typography.size.xs,
+    color: theme.colors.text.tertiary,
   },
 });

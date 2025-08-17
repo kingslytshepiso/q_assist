@@ -22,7 +22,7 @@ export const getAuthErrorInfo = (error: AuthError): AuthErrorInfo => {
       return {
         title: "Email Not Verified",
         message:
-          "Please verify your email address before signing in. Check your inbox for a verification link.",
+          "Please verify your email address before signing in. Check your inbox for a verification code.",
         isRecoverable: true,
         action: "Resend Verification Email",
       };

@@ -17,9 +17,12 @@ interface AuthContextType {
   ) => Promise<{ error: AuthError | null; data: any }>;
   signOut: () => Promise<{ error: AuthError | null }>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
-  resendVerificationEmail: (
-    email: string
+  sendOTP: (email: string) => Promise<{ error: AuthError | null }>;
+  verifyOTP: (
+    email: string,
+    token: string
   ) => Promise<{ error: AuthError | null }>;
+  resendOTP: (email: string) => Promise<{ error: AuthError | null }>;
   isEmailVerified: () => boolean;
   refreshSession: () => Promise<void>;
 }
@@ -115,6 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
+      // Create the user account
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -122,7 +126,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           data: {
             full_name: fullName,
           },
-          emailRedirectTo: "assist://auth/callback",
         },
       });
 
@@ -189,10 +192,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const resendVerificationEmail = async (email: string) => {
+  const sendOTP = async (email: string) => {
     try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
+      const { error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
           emailRedirectTo: "assist://auth/callback",
@@ -200,13 +202,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       if (error) {
-        console.error("Resend verification error:", error);
+        console.error("Send OTP error:", error);
         return { error };
       }
 
       return { error: null };
     } catch (error) {
-      console.error("Unexpected resend verification error:", error);
+      console.error("Unexpected send OTP error:", error);
+      return {
+        error: {
+          message: "An unexpected error occurred. Please try again.",
+          name: "UnexpectedError",
+          status: 500,
+        } as AuthError,
+      };
+    }
+  };
+
+  const verifyOTP = async (email: string, token: string) => {
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email: email,
+        token: token,
+        type: "email",
+      });
+
+      if (error) {
+        console.error("Verify OTP error:", error);
+        return { error };
+      }
+
+      return { error: null };
+    } catch (error) {
+      console.error("Unexpected verify OTP error:", error);
+      return {
+        error: {
+          message: "An unexpected error occurred. Please try again.",
+          name: "UnexpectedError",
+          status: 500,
+        } as AuthError,
+      };
+    }
+  };
+
+  const resendOTP = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          emailRedirectTo: "assist://auth/callback",
+        },
+      });
+
+      if (error) {
+        console.error("Resend OTP error:", error);
+        return { error };
+      }
+
+      return { error: null };
+    } catch (error) {
+      console.error("Unexpected resend OTP error:", error);
       return {
         error: {
           message: "An unexpected error occurred. Please try again.",
@@ -249,7 +304,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     signUp,
     signOut,
     resetPassword,
-    resendVerificationEmail,
+    sendOTP,
+    verifyOTP,
+    resendOTP,
     isEmailVerified,
     refreshSession,
   };

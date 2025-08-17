@@ -20,19 +20,39 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Assist to use your location to show nearby requests."
+        }
+      ],
       "expo-secure-store"
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.assist.app"
+      "bundleIdentifier": "com.assist.app",
+      "config": {
+        "googleMapsApiKey": "AIzaSyD-pXQ_jMnobUaJd09Hsrqval7P7rtvlp4"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.assist.app"
+      "package": "com.assist.app",
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_ANDROID_API_KEY_HERE"
+        }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,7 +60,10 @@
     "scheme": "assist",
     "extra": {
       "supabaseUrl": "process.env.EXPO_PUBLIC_SUPABASE_URL",
-      "supabaseAnonKey": "process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY"
+      "supabaseAnonKey": "process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY",
+      "eas": {
+        "projectId": "eef3f401-78c1-46da-864d-1fa7ae4677f7"
+      }
     }
   }
 }
